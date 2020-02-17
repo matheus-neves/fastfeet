@@ -4,6 +4,8 @@ class Delivery extends Model {
   static init(sequelize) {
     super.init(
       {
+        deliveryman_id: Sequelize.INTEGER,
+        recipient_id: Sequelize.INTEGER,
         product: Sequelize.STRING,
         canceled_at: Sequelize.DATE,
       },

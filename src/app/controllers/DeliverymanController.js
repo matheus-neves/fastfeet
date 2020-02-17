@@ -12,9 +12,7 @@ class DeliverymanController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string()
-        .strict()
-        .required(),
+      name: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
@@ -45,9 +43,7 @@ class DeliverymanController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string()
-        .strict()
-        .required(),
+      name: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
@@ -79,11 +75,7 @@ class DeliverymanController {
         .json({ error: 'Id not registered in the system.' });
     }
 
-    await deliveryman.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
+    await deliveryman.destroy();
 
     return res.json();
   }
