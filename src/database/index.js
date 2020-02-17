@@ -7,7 +7,7 @@ import File from '../app/models/File';
 
 import databaseConfig from '../config/database';
 
-const models = [Recipient, User, File, Deliveryman];
+const models = [Recipient, File, User, Deliveryman];
 
 class Database {
   constructor() {
@@ -19,7 +19,7 @@ class Database {
 
     models
       .map(model => model.init(this.connection))
-      .map(model => model.associate && model.associate(this.connection.model));
+      .map(model => model.associate && model.associate(this.connection.models));
   }
 }
 
