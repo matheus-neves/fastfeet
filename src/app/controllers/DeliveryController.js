@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
+import Queue from '../../lib/Queue';
+import DeliveryMail from '../jobs/DeliveryMail';
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
-
-import Mail from '../../lib/Mail';
 
 class DeliveryController {
   async index(req, res) {
@@ -53,15 +53,10 @@ class DeliveryController {
       ],
     });
 
-    await Mail.sendMail({
-      to: `${deliveryman.name} <${deliveryman.email}>`,
-      subject: 'Você tem uma nova encomenda',
-      template: 'delivery',
-      context: {
-        delivery: delivery.toJSON(),
-        deliveryman: deliveryman.toJSON(),
-        recipient: recipient.toJSON(),
-      },
+    await Queue.add(DeliveryMail.key, {
+      delivery: delivery.toJSON(),
+      deliveryman: deliveryman.toJSON(),
+      recipient: recipient.toJSON(),
     });
 
     return res.status(202).json({ delivery });
