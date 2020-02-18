@@ -1,0 +1,15 @@
+Olá, <strong>{{ deliveryman.name }}</strong>
+<p>O produto <strong>{{ delivery.product }}</strong> já está disponível para a retirada.</p>
+<hr />
+<p>
+  <strong>Nome do destinatário: </strong> {{ recipient.name }} <br />
+  <strong>Endereço para entrega: </strong> <br />
+  <strong>Rua: </strong> <span>{{ recipient.street }}, número {{ recipient.number}}</span> <br />
+  {{#if recipient.complement}}
+    <strong>Complemento: </strong> <span> {{recipient.complement}} </span> <br />
+  {{/if}}
+  <strong>Cidade: </strong> <span>{{ recipient.city }}</span> <br />
+  <strong>Estado: </strong> <span>{{ recipient.state }}</span> <br />
+  <strong>CEP: </strong> <span>{{ recipient.zip_code }}</span>
+</p>
+<hr />

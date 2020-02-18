@@ -1,5 +1,9 @@
 import * as Yup from 'yup';
 import Delivery from '../models/Delivery';
+import Deliveryman from '../models/Deliveryman';
+import Recipient from '../models/Recipient';
+
+import Mail from '../../lib/Mail';
 
 class DeliveryController {
   async index(req, res) {
@@ -25,6 +29,40 @@ class DeliveryController {
     }
 
     const delivery = await Delivery.create(req.body);
+
+    const { recipient, deliveryman } = await Delivery.findByPk(delivery.id, {
+      include: [
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: [
+            'name',
+            'street',
+            'number',
+            'complement',
+            'state',
+            'city',
+            'zip_code',
+          ],
+        },
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'Você tem uma nova encomenda',
+      template: 'delivery',
+      context: {
+        delivery: delivery.toJSON(),
+        deliveryman: deliveryman.toJSON(),
+        recipient: recipient.toJSON(),
+      },
+    });
 
     return res.status(202).json({ delivery });
   }
