@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
+import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
@@ -16,6 +17,7 @@ class DeliverymanController {
       email: Yup.string()
         .email()
         .required(),
+      avatar_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -32,13 +34,15 @@ class DeliverymanController {
       return res.status(400).json({ error: 'Email already exists.' });
     }
 
-    // review the code
-    const { id, name, email } = await Deliveryman.create({
-      ...req.body,
-      avatar_id: 1,
+    const { name, email, avatar_id } = req.body;
+
+    const deliveryman = await Deliveryman.create({
+      name,
+      email,
+      avatar_id: avatar_id || null,
     });
 
-    return res.status(201).json({ id, name, email });
+    return res.status(202).json(deliveryman);
   }
 
   async update(req, res) {
@@ -47,6 +51,7 @@ class DeliverymanController {
       email: Yup.string()
         .email()
         .required(),
+      avatar_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -61,9 +66,17 @@ class DeliverymanController {
         .json({ error: 'Id not registered in the system.' });
     }
 
-    const { id, name, email } = await deliveryman.update(req.body);
+    if (req.body.avatar_id) {
+      const checkAvatarExist = await File.findByPk(req.body.avatar_id);
 
-    return res.json({ id, name, email });
+      if (!checkAvatarExist) {
+        return res.status(400).json({ error: 'Avatar_id not exist' });
+      }
+    }
+
+    const { id, name, email, avatar_id } = await deliveryman.update(req.body);
+
+    return res.json({ id, name, email, avatar_id });
   }
 
   async delete(req, res) {
