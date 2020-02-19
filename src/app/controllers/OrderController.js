@@ -1,20 +1,20 @@
 import * as Yup from 'yup';
 import Queue from '../../lib/Queue';
-import DeliveryMail from '../jobs/DeliveryMail';
-import Delivery from '../models/Delivery';
+import OrderMail from '../jobs/OrderMail';
+import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
 
-class DeliveryController {
+class OrderController {
   async index(req, res) {
-    const deliveries = await Delivery.findAll({
+    const orders = await Order.findAll({
       where: {
         canceled_at: null,
       },
       // attributes: ['product', 'start_date', 'end_date'],
     });
 
-    return res.json(deliveries);
+    return res.json(orders);
   }
 
   async store(req, res) {
@@ -28,9 +28,9 @@ class DeliveryController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const delivery = await Delivery.create(req.body);
+    const order = await Order.create(req.body);
 
-    const { recipient, deliveryman } = await Delivery.findByPk(delivery.id, {
+    const { recipient, deliveryman } = await Order.findByPk(order.id, {
       include: [
         {
           model: Recipient,
@@ -53,13 +53,13 @@ class DeliveryController {
       ],
     });
 
-    await Queue.add(DeliveryMail.key, {
-      delivery: delivery.toJSON(),
+    await Queue.add(OrderMail.key, {
+      order: order.toJSON(),
       deliveryman: deliveryman.toJSON(),
       recipient: recipient.toJSON(),
     });
 
-    return res.status(202).json({ delivery });
+    return res.status(202).json({ order });
   }
 
   async update(req, res) {
@@ -73,32 +73,32 @@ class DeliveryController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const delivery = await Delivery.findByPk(req.params.id);
+    const order = await Order.findByPk(req.params.id);
 
-    if (delivery.canceled_at !== null) {
-      return res.status(400).json({ error: 'That delivery was cancelled' });
+    if (order.canceled_at !== null) {
+      return res.status(400).json({ error: 'That order was cancelled' });
     }
 
-    const updatedDelivery = await delivery.update(req.body);
+    const updatedOrder = await order.update(req.body);
 
-    return res.json(updatedDelivery);
+    return res.json(updatedOrder);
   }
 
   async delete(req, res) {
-    const delivery = await Delivery.findByPk(req.params.id);
+    const order = await Order.findByPk(req.params.id);
 
-    if (!delivery) {
+    if (!order) {
       return res
         .status(400)
         .json({ error: 'Id not registered in the system.' });
     }
 
-    delivery.canceled_at = new Date();
+    order.canceled_at = new Date();
 
-    await delivery.save();
+    await order.save();
 
-    return res.json(delivery);
+    return res.json(order);
   }
 }
 
-export default new DeliveryController();
+export default new OrderController();
