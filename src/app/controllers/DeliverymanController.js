@@ -42,7 +42,7 @@ class DeliverymanController {
       avatar_id: avatar_id || null,
     });
 
-    return res.status(202).json(deliveryman);
+    return res.status(201).json(deliveryman);
   }
 
   async update(req, res) {

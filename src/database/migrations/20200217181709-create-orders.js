@@ -31,7 +31,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: 'signatures',
+          model: 'files',
           key: 'id',
         },
         onUpdate: 'CASCADE',
