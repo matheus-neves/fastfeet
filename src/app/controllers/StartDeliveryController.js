@@ -15,17 +15,26 @@ class StartDeliveryController {
     const order = await Order.findOne({
       where: {
         id: order_id,
-        start_date: null,
-        end_date: null,
-        canceled_at: null,
-        deliveryman_id: {
-          [Op.eq]: deliveryman_id,
-        },
+        deliveryman_id,
       },
     });
 
     if (!order) {
-      return res.status(400).json({ error: 'Invalid order' });
+      return res
+        .status(404)
+        .json({ error: 'This order does not belong to that delivery man' });
+    }
+
+    if (order.end_date !== null) {
+      return res.status(400).json({ error: 'Order already delivered' });
+    }
+
+    if (order.canceled_at !== null) {
+      return res.status(400).json({ error: 'Order cancelled' });
+    }
+
+    if (order.start_date !== null) {
+      return res.status(400).json({ error: 'Order already started' });
     }
 
     const ordersCount = await Order.count({

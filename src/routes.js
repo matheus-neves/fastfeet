@@ -9,6 +9,8 @@ import OrderController from './app/controllers/OrderController';
 import DeliveryController from './app/controllers/DeliveryController';
 import StartDeliveryController from './app/controllers/StartDeliveryController';
 import FinishDeliveryController from './app/controllers/FinishDeliveryController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
+import ProblemController from './app/controllers/ProblemController';
 import FileController from './app/controllers/FileController';
 import authMiddleware from './app/middlewares/auth';
 
@@ -21,16 +23,22 @@ routes.post('/session', SessionController.store);
 routes.get('/deliveryman/:id/deliveries', DeliveryController.index);
 
 routes.put(
-  '/deliveryman/:deliveryman_id/start_delivery/:order_id',
+  '/deliveryman/:deliveryman_id/start-delivery/:order_id',
   StartDeliveryController.update
 );
 
 routes.put(
-  '/deliveryman/:deliveryman_id/finish_delivery/:order_id',
+  '/deliveryman/:deliveryman_id/finish-delivery/:order_id',
   FinishDeliveryController.update
 );
 
+routes.get('/delivery/:order_id/problems', DeliveryProblemController.index);
+routes.post('/delivery/:order_id/problems', DeliveryProblemController.store);
+
 routes.use(authMiddleware);
+
+routes.get('/delivery/problems', ProblemController.index);
+routes.put('/problem/:id/cancel-delivery', ProblemController.update);
 
 routes.post('/recipient', RecipientController.store);
 routes.put('/recipient/:id', RecipientController.update);

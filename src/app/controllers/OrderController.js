@@ -11,7 +11,6 @@ class OrderController {
       where: {
         canceled_at: null,
       },
-      // attributes: ['product', 'start_date', 'end_date'],
     });
 
     return res.json(orders);
