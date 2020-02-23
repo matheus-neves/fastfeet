@@ -5,7 +5,7 @@ class DeliveryController {
   async index(req, res) {
     const { deliveried } = req.query;
 
-    const orders = await Order.finddAll({
+    const orders = await Order.findAll({
       where: {
         deliveryman_id: req.params.id,
         canceled_at: null,
